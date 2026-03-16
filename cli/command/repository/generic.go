@@ -5,7 +5,6 @@ import (
 	"strings"
 )
 
-
 func getEnv(key, fallback string) string {
 	if value, ok := os.LookupEnv(key); ok {
 		return value
@@ -16,7 +15,7 @@ func getEnv(key, fallback string) string {
 func CheckWalletNetwork(walletAddr string) int {
 	if len(walletAddr) == 42 && strings.HasPrefix(walletAddr, "0x") {
 		return EthNetwork // ETH
-	} else if len(walletAddr) > 25 && len(walletAddr) < 36 && checkBTCFormat(walletAddr) {
+	} else if len(walletAddr) >= 26 && len(walletAddr) <= 62 && checkBTCFormat(walletAddr) {
 		return BtcNetwork // BTC
 	}
 	return -1 // Others
