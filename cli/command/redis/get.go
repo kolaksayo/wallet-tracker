@@ -90,7 +90,7 @@ func getRedisCmd(cmd *cobra.Command, _ []string) error {
 	// print out query settings
 	color.Blue(queryArgs.String())
 
-	if exchange == nil || len(exchange) == 0 {
+	if len(exchange) == 0 {
 		color.Blue("0 result.")
 		return nil
 	}

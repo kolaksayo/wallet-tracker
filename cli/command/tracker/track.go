@@ -130,11 +130,13 @@ func TrackWallet(dbConfig models.Database, args models.ScammerQueryArgs) ([]byte
 
 	for i := range walletID {
 		network := repository.CheckWalletNetwork(walletID[i])
+		color.Blue(strconv.Itoa(network))
 		graph := repository.New()
 
 		if network == repository.BtcNetwork {
+			color.Blue("Your wallet network is BTC")
 
-			c, e := blockchain.New()
+			c, _ := blockchain.New()
 
 			resp, e := c.GetAddress(walletID[i])
 			if e != nil {
@@ -218,7 +220,9 @@ func TrackWallet(dbConfig models.Database, args models.ScammerQueryArgs) ([]byte
 
 			}
 		} else if network == repository.EthNetwork {
-			c, e := blockchain.New()
+
+			color.Blue("Your wallet network is ETH")
+			c, _ := blockchain.New()
 
 			resp2, e := c.GetETHAddressSummary(walletID[i], true)
 			if e != nil {

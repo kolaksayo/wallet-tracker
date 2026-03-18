@@ -1,7 +1,9 @@
 package neodash
 
 import (
+	"fmt"
 	"github.com/aydinnyunus/wallet-tracker/domain/cli"
+	models "github.com/aydinnyunus/wallet-tracker/domain/repository"
 	"github.com/fatih/color"
 	"github.com/k0kubun/pp"
 	"github.com/spf13/cobra"
@@ -10,9 +12,6 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
-
-	models "github.com/aydinnyunus/wallet-tracker/domain/repository"
-	"github.com/go-git/go-git/v5"
 )
 
 // global constants for file
@@ -106,33 +105,42 @@ func CreateNeodash(args models.ScammerQueryArgs) ([]byte, error) {
 	}
 
 	color.Yellow("Define Schema is starting")
-	out, err := DefineSchema(args)
+	_, err := DefineSchema(args)
 	if err != nil {
+		log.Fatal(err)
 		return nil, err
 	}
 	color.Yellow("Define Schema is finished")
 
 	color.Yellow("Builds, (re)creates, starts, and attaches to containers for a service.")
 
-	out, err = DockerComposeUp(args)
-	if err != nil {
+		return out, err
+	} else {
+		color.Red("Docker is not installed.")
 		return nil, err
 	}
-	color.Yellow("docker-compose up finished. http://localhost:80")
 
-	return out, err
 }
 
 // DefineSchema is a temporary method to satisfy the authentication process.
 func DefineSchema(args models.ScammerQueryArgs) ([]byte, error) {
-	cmdStr := "sudo sh " + mydir + "/bitcoin-to-neo4jdash/define_schema.sh"
+	cmdStr := "sudo bash define_schema.sh"
 	out, _ := exec.Command("/bin/sh", "-c", cmdStr).Output()
+	color.Yellow(string(out))
 	return out, nil
 }
 
 func DockerComposeUp(args models.ScammerQueryArgs) ([]byte, error) {
 	cmdStr := "sudo docker-compose -f " + mydir + "/bitcoin-to-neo4jdash/docker-compose.yml up"
 	out, _ := exec.Command("/bin/sh", "-c", cmdStr).Output()
-
+	color.Yellow(string(out))
 	return out, nil
+}
+
+func checkBinaryExists(binaryName string) error {
+	_, err := exec.LookPath(binaryName)
+	if err != nil {
+		return fmt.Errorf("%s binary not found", binaryName)
+	}
+	return nil
 }
